@@ -32,20 +32,27 @@ WHERE SALARY = (SELECT MAX(SALARY)
                  HAVING e1.DEPT_CODE = e2.DEPT_CODE);
 
 -- EMPLOYEE 테이블에서 각 직급별 평균 급여보다 높은 급여를 받는 직원의 이름, 직급, 급여를 조회하시오.
-SELECT e1.EMP_NAME,d.DEPT_TITLE,e1.SALARY
-FROM employee e1 JOIN department d ON e1.DEPT_CODE = d.DEPT_ID
+SELECT e1.EMP_NAME,j.JOB_NAME,e1.SALARY
+FROM employee e1 JOIN job j ON e1.JOB_CODE = j.JOB_CODE
 WHERE SALARY > (SELECT AVG(SALARY)
                  FROM employee e2
-                 GROUP BY DEPT_CODE
-                 HAVING e1.DEPT_CODE = e2.DEPT_CODE);
+                 GROUP BY JOB_CODE
+                 HAVING e1.JOB_CODE = e2.JOB_CODE);
 
 -- EXISTS 절 문제
 -- DEPARTMENT 테이블에서 직원이 있는 부서의 부서명을 조회하시오.
+-- 방법 1
 SELECT DISTINCT DEPT_TITLE
 FROM employee e JOIN department d ON d.DEPT_ID = e.DEPT_CODE
 WHERE EXISTS(SELECT e.EMP_NAME
              FROM employee e
              GROUP BY DEPT_CODE);
+-- 방법 2
+SELECT DEPT_TITLE
+FROM department d
+WHERE EXISTS(SELECT 1
+             FROM employee e
+             WHERE d.DEPT_ID = e.DEPT_CODE);
 
 -- EMPLOYEE 테이블에서 급여가 가장 높은 직원의 이름과 급여를 조회하시오. (NOT EXISTS 사용)
 SELECT EMP_NAME,SALARY
@@ -58,9 +65,10 @@ WHERE NOT EXISTS(SELECT SALARY
 -- EMPLOYEE 테이블에서 각 부서별 평균 급여를 계산하고,
 -- 평균 급여가 4000000 이상인 부서의 부서명과 평균 급여를 조회하시오.
 WITH emp_cte AS (
-    SELECT DEPT_TITLE, AVG(SALARY)
+    SELECT DEPT_TITLE, AVG(SALARY) AS avg
     FROM employee JOIN department ON DEPT_CODE = DEPT_ID
     GROUP BY DEPT_CODE
 )
 SELECT *
-FROM emp_cte;
+FROM emp_cte
+WHERE emp_cte.avg >= 4000000;
