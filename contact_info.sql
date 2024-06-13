@@ -5,7 +5,7 @@ USE ogclass_db;
 DROP TABLE IF EXISTS class;
 CREATE TABLE IF NOT EXISTS class(
     student_no int PRIMARY KEY AUTO_INCREMENT,
-    gender varchar(3) CHECK(gender IN ('남','여')),
+    gender varchar(5) NOT NULL CHECK(gender IN ('남','여')),
     student_name varchar(255) NOT NULL,
     github_id varchar(255) NOT NULL UNIQUE,
     email varchar(255) NOT NULL UNIQUE,
@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS favorite_subject(
     subject_no int PRIMARY KEY AUTO_INCREMENT,
     subject_name varchar(255) NOT NULL UNIQUE
 );
+
+DESCRIBE class;
+DESCRIBE favorite_subject;
 
 INSERT INTO favorite_subject VALUES
        (1,'JAVA'),
