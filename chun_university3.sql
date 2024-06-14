@@ -139,14 +139,7 @@ WHERE DEPARTMENT_NO = (SELECT DEPARTMENT_NO
                        WHERE STUDENT_NAME = '최경희');
 
 -- 18. 국어국문학과에서 총 평점이 가장 높은 학생의 이름과 학번을 표시하는 SQL 문을 작성하시오.
-SELECT AVG(POINT)-- STUDENT_NO, STUDENT_NAME
-FROM tb_student JOIN tb_grade USING (STUDENT_NO)
-WHERE DEPARTMENT_NO = (SELECT DEPARTMENT_NO
-                       FROM tb_department
-                       WHERE DEPARTMENT_NAME = '국어국문학과')
-GROUP BY STUDENT_NO;
-
-SELECT MAX(average) -- ,STUDENT_NO,STUDENT_NAME
+SELECT MAX(average) -- , STUDENT_NO,STUDENT_NAME
 FROM (SELECT AVG(POINT) AS average, STUDENT_NO, STUDENT_NAME
       FROM tb_student JOIN tb_grade USING (STUDENT_NO)
       WHERE DEPARTMENT_NO = (SELECT DEPARTMENT_NO
@@ -156,5 +149,11 @@ FROM (SELECT AVG(POINT) AS average, STUDENT_NO, STUDENT_NAME
 
 -- 19. 춘 기술대학교의 "환경조경학과"가 속한 같은 계열 학과들의 학과 별 전공과목 평점을 파악하기 위한 적절한 SQL 문을 찾아내시오.
 --     단, 출력헤더는 "계열 학과명", "전공평점"으로 표시되도록 하고, 평점은 소수점 한 자리까지만 반올림하여 표시되도록 한다.
-
-
+SELECT DEPARTMENT_NAME AS '계열 학과명', ROUND(AVG(POINT),1) AS '전공평점'
+FROM tb_class JOIN tb_department USING (DEPARTMENT_NO)
+              JOIN tb_grade USING (CLASS_NO)
+WHERE CATEGORY = (SELECT CATEGORY
+                  FROM tb_department
+                  WHERE DEPARTMENT_NAME = '환경조경학과') AND
+      CLASS_TYPE LIKE '%전공%'
+GROUP BY DEPARTMENT_NO;
